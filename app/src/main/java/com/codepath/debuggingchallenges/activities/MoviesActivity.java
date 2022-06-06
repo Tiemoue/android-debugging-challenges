@@ -14,6 +14,7 @@ import com.codepath.debuggingchallenges.models.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -46,12 +47,14 @@ public class MoviesActivity extends AppCompatActivity {
     private void fetchMovies() {
         String url = " https://api.themoviedb.org/3/movie/now_playing?api_key=";
         AsyncHttpClient client = new AsyncHttpClient();
-        client.get(url, null, new JsonHttpResponseHandler() {
+        client.get(url, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Headers headers, JSON response) {
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
                 try {
-                    JSONArray moviesJson = response.jsonObject.getJSONArray("results");
-                    movies = Movie.fromJSONArray(moviesJson);
+                    JSONArray moviesJson = jsonObject.getJSONArray("results");
+                    Log.i("here", "Results: " + moviesJson.toString());
+                    movies.addAll(Movie.fromJSONArray(moviesJson));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
